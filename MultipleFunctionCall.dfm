@@ -1,0 +1,82 @@
+object Form3: TForm3
+  Left = 0
+  Top = 0
+  Caption = 'Form3'
+  ClientHeight = 441
+  ClientWidth = 624
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  TextHeight = 15
+  object lblNum1: TLabel
+    Left = 16
+    Top = 32
+    Width = 53
+    Height = 15
+    Caption = 'Number 1'
+  end
+  object lblNum2: TLabel
+    Left = 16
+    Top = 72
+    Width = 53
+    Height = 15
+    Caption = 'Number 2'
+  end
+  object lblOperation: TLabel
+    Left = 8
+    Top = 112
+    Width = 53
+    Height = 15
+    Caption = 'Operation'
+  end
+  object lblResult: TLabel
+    Left = 360
+    Top = 107
+    Width = 129
+    Height = 18
+    Caption = 'Display Result'
+    Color = clCrimson
+    ParentColor = False
+  end
+  object edtNum1: TEdit
+    Left = 104
+    Top = 24
+    Width = 121
+    Height = 23
+    TabOrder = 0
+    Text = 'First Input'
+  end
+  object edtNum2: TEdit
+    Left = 104
+    Top = 69
+    Width = 121
+    Height = 23
+    TabOrder = 1
+    Text = 'Second Number'
+  end
+  object cmbOperation: TComboBox
+    Left = 104
+    Top = 104
+    Width = 145
+    Height = 23
+    TabOrder = 2
+    Text = 'Select Operation'
+    Items.Strings = (
+      'Addition'
+      'Multiplication'
+      'Division'
+      'Factorial')
+  end
+  object btnCalculate: TButton
+    Left = 264
+    Top = 103
+    Width = 75
+    Height = 25
+    Caption = 'Calculate'
+    TabOrder = 3
+    OnClick = btnCalculateClick
+  end
+end

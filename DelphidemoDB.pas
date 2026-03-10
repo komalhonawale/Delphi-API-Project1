@@ -1,0 +1,317 @@
+﻿unit DelphidemoDB;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Grids, Vcl.DBGrids,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  Data.DB, System.DateUtils, FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat,
+  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt;
+
+type
+  TForm7 = class(TForm)
+    txtempname: TEdit;
+    txtempdept: TEdit;
+    txtempsalary: TEdit;
+    txtmobile: TEdit;
+    txtemail: TEdit;
+    comgender: TComboBox;
+    txtdob: TDateTimePicker;
+    Memo1: TMemo;
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+
+    btnadd: TButton;
+    btnedit: TButton;
+    btnsave: TButton;
+    btndelete: TButton;
+    btnexit: TButton;
+    Label10: TLabel;
+    DBGrid1: TDBGrid;
+    FDConnection1: TFDConnection;
+    DataSource1: TDataSource;
+    FDQuery1: TFDQuery;
+    procedure FormCreate(Sender: TObject);
+    procedure btnaddClick(Sender: TObject);
+    procedure btnsaveClick(Sender: TObject);
+    procedure btneditClick(Sender: TObject);
+    procedure DBGrid1CellClick(Column: TColumn);
+    procedure btnexitClick(Sender: TObject);
+    procedure btndeleteClick(Sender: TObject);
+
+
+  private
+    IsEditMode: Boolean;
+    SelectedId: Integer;
+
+    procedure EnableFields(AEnable: Boolean);
+    procedure ClearFields;
+    procedure RefreshGrid;
+
+  public
+  end;
+
+var
+  Form7: TForm7;
+
+implementation
+
+{$R *.dfm}
+
+{---------------- Utility Methods ----------------}
+
+procedure TForm7.EnableFields(AEnable: Boolean);
+begin
+  txtempname.Enabled := AEnable;
+  txtempdept.Enabled := AEnable;
+  txtempsalary.Enabled := AEnable;
+  comgender.Enabled := AEnable;
+  txtdob.Enabled := AEnable;
+  txtmobile.Enabled := AEnable;
+  txtemail.Enabled := AEnable;
+  Memo1.Enabled := AEnable;
+end;
+
+procedure TForm7.FormCreate(Sender: TObject);
+begin
+    FDQuery1.Connection := FDConnection1;
+    FDQuery1.Open;
+    EnableFields(False);
+  btnadd.Enabled := True;
+  btnedit.Enabled := False;
+  btnsave.Enabled := False;
+  btndelete.Enabled := False;
+end;
+
+procedure TForm7.btnaddClick(Sender: TObject);
+begin
+ ClearFields;
+  EnableFields(True);
+  IsEditMode := False;
+  btnsave.Enabled := True;
+  btnadd.Enabled := False;
+end;
+
+
+{---------------- Grid Click ----------------}
+
+procedure TForm7.DBGrid1CellClick(Column: TColumn);
+begin
+  if FDQuery1.IsEmpty then Exit;
+
+  SelectedId := FDQuery1.FieldByName('Id').AsInteger;
+
+  txtempname.Text := FDQuery1.FieldByName('Name').AsString;
+  txtempdept.Text := FDQuery1.FieldByName('Department').AsString;
+  txtempsalary.Text := FDQuery1.FieldByName('Salary').AsString;
+  comgender.Text := FDQuery1.FieldByName('Gender').AsString;
+ txtdob.Date := StrToDateDef(
+  FDQuery1.FieldByName('DateofBirth').AsString,
+  Date
+);
+
+  txtmobile.Text := FDQuery1.FieldByName('MobileNo').AsString;
+  txtemail.Text := FDQuery1.FieldByName('EmailID').AsString;
+  Memo1.Text := FDQuery1.FieldByName('Address').AsString;
+
+  btnedit.Enabled := True;
+  btndelete.Enabled := True;
+end;
+
+{---------------- Edit ----------------}
+
+
+
+procedure TForm7.btneditClick(Sender: TObject);
+begin
+  if SelectedId = 0 then Exit;
+  EnableFields(True);
+  IsEditMode := True;
+  btnsave.Enabled := True;
+end;
+
+
+{---------------- Delete ----------------}
+
+procedure TForm7.btndeleteClick(Sender: TObject);
+begin
+  if SelectedId = 0 then Exit;
+
+  if MessageDlg('Delete this record?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then Exit;
+
+  FDQuery1.Close;
+  FDQuery1.SQL.Text := 'DELETE FROM Employee WHERE Id=:Id';
+  FDQuery1.ParamByName('Id').AsInteger := SelectedId;
+  FDQuery1.ExecSQL;
+
+  RefreshGrid;
+  ClearFields;
+end;
+
+{---------------- Exit ----------------}
+
+procedure TForm7.btnexitClick(Sender: TObject);
+begin
+  Close;
+end;
+
+
+procedure TForm7.btnsaveClick(Sender: TObject);
+var
+  SalaryValue: Double;
+  DOBValue: TDate;
+  MobileNo: Int64;
+  I: Integer;
+  Ch: Char;
+begin
+  if Trim(txtempname.Text) = '' then
+  begin
+    ShowMessage('Employee name is required');
+    txtempname.SetFocus;
+    Exit;
+  end;
+
+  // Allow only letters and spaces
+  for I := 1 to Length(txtempname.Text) do
+  begin
+    Ch := txtempname.Text[I];
+  if not (Ch in ['A'..'Z', 'a'..'z', ' ']) then
+
+    begin
+      ShowMessage('Employee name should contain only alphabets');
+      txtempname.SetFocus;
+      Exit;
+    end;
+  end;
+
+  if Trim(txtempdept.Text) = '' then
+  begin
+    ShowMessage('Department is required');
+    txtempdept.SetFocus;
+    Exit;
+  end;
+
+  if not TryStrToFloat(txtempsalary.Text, SalaryValue) then
+  begin
+    ShowMessage('Enter valid salary');
+    txtempsalary.SetFocus;
+    Exit;
+  end;
+
+  if comgender.ItemIndex = -1 then
+  begin
+    ShowMessage('Select gender');
+    Exit;
+  end;
+
+  // DateTimePicker
+  DOBValue := txtdob.Date;
+  if DOBValue > Date then
+  begin
+    ShowMessage('DOB cannot be future date');
+    Exit;
+  end;
+
+  if not TryStrToInt64(txtmobile.Text, MobileNo) then
+  begin
+    ShowMessage('Mobile number must contain digits only');
+    txtmobile.SetFocus;
+    Exit;
+  end;
+
+  if Length(txtmobile.Text) <> 10 then
+  begin
+    ShowMessage('Mobile number must be 10 digits');
+    Exit;
+  end;
+
+  if Trim(txtemail.Text) = '' then
+  begin
+    ShowMessage('Email is required');
+    txtemail.SetFocus;
+    Exit;
+  end;
+
+if Trim(Memo1.Text) = '' then
+begin
+  ShowMessage('Address is required');
+  Memo1.SetFocus;
+  Exit;
+end;
+
+
+  FDQuery1.Close;
+
+  if IsEditMode then
+  begin
+    FDQuery1.SQL.Text :=
+      'UPDATE Employee SET Name=:Name, Department=:Dept, Salary=:Salary, ' +
+      'Gender=:Gender, DateofBirth=:DOB, MobileNo=:Mobile, EmailID=:Email, ' +
+      'Address=:Address WHERE Id=:Id';
+    FDQuery1.ParamByName('Id').AsInteger := SelectedId;
+  end
+  else
+  begin
+    FDQuery1.SQL.Text :=
+      'INSERT INTO Employee (Name, Department, Salary, Gender, DateofBirth, MobileNo, EmailID, Address) ' +
+      'VALUES (:Name,:Dept,:Salary,:Gender,:DOB,:Mobile,:Email,:Address)';
+  end;
+
+  FDQuery1.ParamByName('Name').AsString := txtempname.Text;
+  FDQuery1.ParamByName('Dept').AsString := txtempdept.Text;
+  FDQuery1.ParamByName('Salary').AsFloat := StrToFloat(txtempsalary.Text);
+  FDQuery1.ParamByName('Gender').AsString := comgender.Text;
+  FDQuery1.ParamByName('DOB').AsDate := txtdob.Date;
+  FDQuery1.ParamByName('Mobile').AsString := txtmobile.Text;
+  FDQuery1.ParamByName('Email').AsString := txtemail.Text;
+  FDQuery1.ParamByName('Address').AsString := Memo1.Text;
+
+  FDQuery1.ExecSQL;
+
+  RefreshGrid;
+  ClearFields;
+  EnableFields(False);
+
+  btnadd.Enabled := True;
+  btnsave.Enabled := False;
+
+  ShowMessage('Record saved successfully');
+end;
+
+procedure TForm7.ClearFields;
+begin
+  txtempname.Clear;
+  txtempdept.Clear;
+  txtempsalary.Clear;
+  txtmobile.Clear;
+  txtemail.Clear;
+  Memo1.Clear;
+  comgender.ItemIndex := -1;
+  txtdob.Date := Date;
+  SelectedId := 0;
+end;
+
+procedure TForm7.RefreshGrid;
+begin
+  FDQuery1.Close;
+  FDQuery1.SQL.Text := 'SELECT * FROM Employee';
+  FDQuery1.Open;
+end;
+
+{---------------- Form Create ----------------}
+
+end.
+

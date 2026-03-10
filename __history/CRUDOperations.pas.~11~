@@ -1,0 +1,159 @@
+unit CRUDOperations;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
+  FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait, FireDAC.Stan.Param,
+  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, Vcl.ComCtrls,
+  Vcl.ExtCtrls;
+
+type
+  TForm8 = class(TForm)
+    Label4: TLabel;
+    Panel1: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    comgender: TComboBox;
+    txtdob: TDateTimePicker;
+    txtmobile: TEdit;
+    txtemail: TEdit;
+    Memo1: TMemo;
+    txtempname: TEdit;
+    txtempdept: TEdit;
+    txtempsalary: TEdit;
+    btnadd: TButton;
+    btnedit: TButton;
+    btnsave: TButton;
+    btndelete: TButton;
+    btnexit: TButton;
+    procedure btnaddClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnsaveClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form8: TForm8;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm8.btnaddClick(Sender: TObject);
+begin
+  txtempname.Enabled := True;
+  txtempdept.Enabled := True;
+  txtempsalary.Enabled := True;
+  comgender.Enabled := True;
+  txtdob.Enabled := True;
+  txtmobile.Enabled := True;
+  txtemail.Enabled := True;
+  Memo1.Enabled := True;
+
+  txtempname.Text := '';
+  txtempdept.Text := '';
+  txtempsalary.Text := '';
+  comgender.ItemIndex := -1;
+  txtdob.Date := Date;
+  txtmobile.Text := '';
+  txtemail.Text := '';
+  Memo1.Text := '';
+
+  btnadd.Enabled := False;
+  btnedit.Enabled := False;
+  btnsave.Enabled := True;
+  btndelete.Enabled := False;
+  btnexit.Enabled := True;
+  btnexit.Caption := 'Back';
+end;
+
+
+procedure TForm8.FormCreate(Sender: TObject);
+begin
+  FDConnection1.Connected := True;
+  FDQuery1.Open;
+
+  txtempname.Enabled := False;
+  txtempdept.Enabled := False;
+  txtempsalary.Enabled := False;
+  comgender.Enabled := False;
+  txtdob.Enabled := False;
+  txtmobile.Enabled := False;
+  txtemail.Enabled := False;
+  Memo1.Enabled := False;
+
+  btnadd.Enabled := True;
+  btnedit.Enabled := False;
+  btnsave.Enabled := False;
+  btndelete.Enabled := False;
+  btnexit.Enabled := True;
+end;
+
+procedure TForm8.btnsaveClick(Sender: TObject);
+begin
+  if Trim(txtempname.Text) = '' then
+  begin
+    ShowMessage('Please enter employee name');
+    Exit;
+  end;
+
+  if Trim(txtempdept.Text) = '' then
+  begin
+    ShowMessage('Please enter department');
+    Exit;
+  end;
+
+  if Trim(txtempsalary.Text) = '' then
+  begin
+    ShowMessage('Please enter salary');
+    Exit;
+  end;
+
+  FDQuery1.Append;
+
+  FDQuery1.FieldByName('Name').AsString := txtempname.Text;
+  FDQuery1.FieldByName('Department').AsString := txtempdept.Text;
+  FDQuery1.FieldByName('Salary').AsFloat :=
+    StrToFloat(txtempsalary.Text);
+  FDQuery1.FieldByName('Gender').AsString := comgender.Text;
+  FDQuery1.FieldByName('DateofBirth').AsString :=
+    FormatDateTime('yyyy-mm-dd', txtdob.Date);
+  FDQuery1.FieldByName('MobileNo').AsString := txtmobile.Text;
+  FDQuery1.FieldByName('EmailID').AsString := txtemail.Text;
+  FDQuery1.FieldByName('Address').AsString := Memo1.Text;
+
+  FDQuery1.Post;
+
+  ShowMessage('Employee saved successfully');
+
+  // Reset UI
+  txtempname.Clear;
+  txtempdept.Clear;
+  txtempsalary.Clear;
+
+  txtempname.Enabled := False;
+  txtempdept.Enabled := False;
+  txtempsalary.Enabled := False;
+
+  btnadd.Enabled := True;
+  btnsave.Enabled := False;
+  btnedit.Enabled := False;
+  btndelete.Enabled := False;
+end;
+
+end.

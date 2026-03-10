@@ -1,0 +1,55 @@
+﻿unit WeatherAPI;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, REST.Types, REST.Client,
+  Data.Bind.Components, Data.Bind.ObjectScope, Vcl.StdCtrls, system.JSON;
+
+type
+  TForm9 = class(TForm)
+    btnGetWeather: TButton;
+    Memo1: TMemo;
+    RESTClient1: TRESTClient;
+    RESTRequest1: TRESTRequest;
+    RESTResponse1: TRESTResponse;
+    procedure btnGetWeatherClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form9: TForm9;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm9.btnGetWeatherClick(Sender: TObject);
+var
+  JSONObj, WeatherObj: TJSONObject;
+  Temp, Wind: string;
+begin
+ RESTRequest1.Method := rmGET;
+  RESTRequest1.Execute;
+
+  JSONObj := TJSONObject.ParseJSONValue(
+    RESTResponse1.Content
+  ) as TJSONObject;
+
+  WeatherObj := JSONObj.GetValue('current_weather') as TJSONObject;
+
+  Temp := WeatherObj.GetValue('temperature').Value;
+  Wind := WeatherObj.GetValue('windspeed').Value;
+
+  Memo1.Lines.Clear;
+  Memo1.Lines.Add('Temperature: ' + Temp + ' °C');
+  Memo1.Lines.Add('Wind Speed: ' + Wind + ' km/h');
+
+  JSONObj.Free;
+end;
+
+end.

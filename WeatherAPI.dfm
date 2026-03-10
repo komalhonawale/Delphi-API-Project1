@@ -1,0 +1,59 @@
+object Form9: TForm9
+  Left = 0
+  Top = 0
+  Caption = 'WeatherAPI'
+  ClientHeight = 398
+  ClientWidth = 520
+  Color = clGrayText
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  TextHeight = 15
+  object btnGetWeather: TButton
+    Left = 24
+    Top = 24
+    Width = 137
+    Height = 34
+    Caption = 'Get Weather'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    OnClick = btnGetWeatherClick
+  end
+  object Memo1: TMemo
+    Left = 24
+    Top = 88
+    Width = 465
+    Height = 233
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 1
+  end
+  object RESTClient1: TRESTClient
+    BaseURL = 
+      'https://api.open-meteo.com/v1/forecast?latitude=18.52&longitude=' +
+      '73.85&current_weather=true'
+    Params = <>
+    SynchronizedEvents = False
+    Left = 24
+    Top = 328
+  end
+  object RESTRequest1: TRESTRequest
+    Client = RESTClient1
+    Params = <>
+    Response = RESTResponse1
+    SynchronizedEvents = False
+    Left = 112
+    Top = 328
+  end
+  object RESTResponse1: TRESTResponse
+    Left = 208
+    Top = 328
+  end
+end

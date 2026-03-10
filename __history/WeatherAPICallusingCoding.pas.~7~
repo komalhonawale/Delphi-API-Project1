@@ -1,0 +1,69 @@
+﻿unit WeatherAPICallusingCoding;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.JSON, REST.Client, REST.Types;
+
+type
+  TForm10 = class(TForm)
+    btnGetWeather: TButton;
+    Memo1: TMemo;
+    procedure btnGetWeatherClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form10: TForm10;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm10.btnGetWeatherClick(Sender: TObject);
+var
+  RESTClient: TRESTClient;
+  RESTRequest: TRESTRequest;
+  RESTResponse: TRESTResponse;
+begin
+  // 1️⃣ Create REST objects
+  RESTClient := TRESTClient.Create(nil);
+  RESTRequest := TRESTRequest.Create(nil);
+  RESTResponse := TRESTResponse.Create(nil);
+
+  try
+    // 2️⃣ Connect them
+    RESTRequest.Client := RESTClient;
+    RESTRequest.Response := RESTResponse;
+
+    // 3️⃣ Set API Base URL
+    RESTClient.BaseURL := 'https://api.open-meteo.com/v1/forecast';
+
+    // 4️⃣ Add query parameters
+    RESTRequest.Params.Clear;
+    RESTRequest.AddParameter('latitude', '18.5', pkGETorPOST);
+    RESTRequest.AddParameter('longitude', '73.8', pkGETorPOST);
+    RESTRequest.AddParameter('current_weather', 'true', pkGETorPOST);
+
+    // 5️⃣ HTTP Method
+    RESTRequest.Method := rmGET;
+
+    // 6️⃣ Execute API
+    RESTRequest.Execute;
+
+    // 7️⃣ Show raw JSON response
+    Memo1.Lines.Text := RESTResponse.Content;
+
+  finally
+    // 8️⃣ Free memory
+    RESTResponse.Free;
+    RESTRequest.Free;
+    RESTClient.Free;
+  end;
+end;
+
+end.

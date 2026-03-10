@@ -1,0 +1,72 @@
+unit WordFrequency;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+type
+  TForm6 = class(TForm)
+    btnCount: TButton;
+    edtInput: TEdit;
+    Label1: TLabel;
+    Memo1: TMemo;
+    procedure btnCountClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form6: TForm6;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm6.btnCountClick(Sender: TObject);
+var
+  Words, WordCount: TStringList;
+  I, Index: Integer;
+  InputStr: string;
+begin
+     Memo1.Clear;
+
+  InputStr := LowerCase(edtInput.Text);
+
+  Words := TStringList.Create;
+  WordCount := TStringList.Create;
+  try
+    // Split words
+    ExtractStrings([' '], [], PChar(InputStr), Words);
+
+    WordCount.Sorted := True;
+    WordCount.Duplicates := dupIgnore;
+
+    // Count words
+    for I := 0 to Words.Count - 1 do
+    begin
+      Index := WordCount.IndexOf(Words[I]);
+
+      if Index = -1 then
+        WordCount.AddObject(Words[I], TObject(1))
+      else
+        WordCount.Objects[Index] :=
+          TObject(Integer(WordCount.Objects[Index]) + 1);
+    end;
+
+    // Display result
+    for I := 0 to WordCount.Count - 1 do
+      Memo1.Lines.Add(
+        WordCount[I] + ' : ' +
+        IntToStr(Integer(WordCount.Objects[I]))
+      );
+
+  finally
+    Words.Free;
+    WordCount.Free;
+end;
+
+end.

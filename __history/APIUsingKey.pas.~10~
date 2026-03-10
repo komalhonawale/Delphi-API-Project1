@@ -1,0 +1,73 @@
+﻿unit APIUsingKey;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Net.HttpClient, System.Net.HttpClientComponent,
+  System.NetEncoding;
+
+type
+  TForm11 = class(TForm)
+    edtUsername: TEdit;
+    edtPassword: TEdit;
+    btnCallAPI: TButton;
+    MemoResult: TMemo;
+    procedure btnCallAPIClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form11: TForm11;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm11.btnCallAPIClick(Sender: TObject);
+var
+  HttpClient: TNetHTTPClient;
+  Response: IHTTPResponse;
+  Username, Password: string;
+  AuthHeader: string;
+begin
+  // 1️⃣ Read values from screen
+  Username := edtUsername.Text;
+  Password := edtPassword.Text;
+
+  // 2️⃣ Validate input
+  if (Username = '') or (Password = '') then
+  begin
+    ShowMessage('Please enter Username and Password');
+    Exit;
+  end;
+
+  // 3️⃣ Create Authorization header
+  AuthHeader :=
+    'Basic ' +
+    TNetEncoding.Base64.Encode(Username + ':' + Password);
+
+  // 4️⃣ Create HTTP client
+  HttpClient := TNetHTTPClient.Create(nil);
+  try
+    // 5️⃣ Add authentication header
+    HttpClient.CustomHeaders['Authorization'] := AuthHeader;
+
+    // 6️⃣ Call API (Example URL)
+    Response := HttpClient.Get(
+      'https://httpbin.org/basic-auth/user/passwd'
+    );
+
+    // 7️⃣ Show result
+    MemoResult.Lines.Text := Response.ContentAsString;
+
+  finally
+    HttpClient.Free;
+  end;
+
+end;
+
+end.

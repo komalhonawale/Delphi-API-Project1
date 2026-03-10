@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.134,=D:\My-Projects\DelphiProjects\Unit7.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.346,D:\My-Projects\DelphiProjects\Unit7.pas=D:\My-Projects\DelphiProjects\DelphidemoDB.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.432,=D:\My-Projects\DelphiProjects\Unit7.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.731,D:\My-Projects\DelphiProjects\Unit10.dfm=D:\My-Projects\DelphiProjects\WeatherAPICallusingCoding.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.714,D:\My-Projects\DelphiProjects\Unit6.dfm=D:\My-Projects\DelphiProjects\WordFrequency.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.590,=D:\My-Projects\DelphiProjects\Unit6.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.714,D:\My-Projects\DelphiProjects\Unit6.pas=D:\My-Projects\DelphiProjects\WordFrequency.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.532,D:\My-Projects\DelphiProjects\WeatherAPI.pas=D:\My-Projects\DelphiProjects\Unit9.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.243,D:\My-Projects\DelphiProjects\Unit5.dfm=D:\My-Projects\DelphiProjects\Palindrome.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.645,D:\My-Projects\DelphiProjects\Unit4.pas=D:\My-Projects\DelphiProjects\ReverseString.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.538,=D:\My-Projects\DelphiProjects\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.993,D:\My-Projects\DelphiProjects\Unit2.pas=D:\My-Projects\DelphiProjects\ProgramToReadValues.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.276,D:\My-Projects\DelphiProjects\APIUsingKey.pas=D:\My-Projects\DelphiProjects\Unit11.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.967,=D:\My-Projects\DelphiProjects\Unit4.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.903,D:\My-Projects\DelphiProjects\Unit3.dfm=D:\My-Projects\DelphiProjects\MultipleFunctionCall.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.542,D:\My-Projects\DelphiProjects\Project1.dproj=D:\My-Projects\DelphiProjects\Project1.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.978,=D:\My-Projects\DelphiProjects\Unit11.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.276,D:\My-Projects\DelphiProjects\APIUsingKey.dfm=D:\My-Projects\DelphiProjects\Unit11.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.297,D:\My-Projects\DelphiProjects\Unit8.pas=D:\My-Projects\DelphiProjects\Calculator.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.676,=D:\My-Projects\DelphiProjects\Unit3.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.903,D:\My-Projects\DelphiProjects\Unit3.pas=D:\My-Projects\DelphiProjects\MultipleFunctionCall.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.532,D:\My-Projects\DelphiProjects\WeatherAPI.dfm=D:\My-Projects\DelphiProjects\Unit9.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.735,=D:\My-Projects\DelphiProjects\Unit8.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.993,D:\My-Projects\DelphiProjects\Unit2.dfm=D:\My-Projects\DelphiProjects\ProgramToReadValues.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.341,D:\My-Projects\DelphiProjects\CRUDOperations.pas=</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.089,D:\My-Projects\DelphiProjects\Unit8.pas=D:\My-Projects\DelphiProjects\CRUDOperations.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.278,=D:\My-Projects\DelphiProjects\Unit8.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.593,=D:\My-Projects\DelphiProjects\Unit9.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.089,D:\My-Projects\DelphiProjects\Unit8.dfm=D:\My-Projects\DelphiProjects\CRUDOperations.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.297,D:\My-Projects\DelphiProjects\Unit8.dfm=D:\My-Projects\DelphiProjects\Calculator.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.646,D:\My-Projects\DelphiProjects\Unit4.dfm=D:\My-Projects\DelphiProjects\ReverseString.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.243,D:\My-Projects\DelphiProjects\Unit5.pas=D:\My-Projects\DelphiProjects\Palindrome.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.346,D:\My-Projects\DelphiProjects\Unit7.dfm=D:\My-Projects\DelphiProjects\DelphidemoDB.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.731,D:\My-Projects\DelphiProjects\Unit10.pas=D:\My-Projects\DelphiProjects\WeatherAPICallusingCoding.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.250,=D:\My-Projects\DelphiProjects\Unit10.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.081,=D:\My-Projects\DelphiProjects\Unit5.pas</Transaction>
+  </Transactions>
+</BorlandProject>

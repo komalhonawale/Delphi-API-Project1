@@ -1,0 +1,241 @@
+unit Calculator;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids;
+
+type
+  TForm8 = class(TForm)
+    txtDisplay: TEdit;
+    btnCE: TButton;
+    btnPM: TButton;
+    Button4: TButton;
+    btnBS: TButton;
+    btnDigit8: TButton;
+    btnAdd: TButton;
+    btnDigit9: TButton;
+    btnDigit7: TButton;
+    btnDigit5: TButton;
+    btnSub: TButton;
+    btnDigit6: TButton;
+    btnDigit4: TButton;
+    btnDigit2: TButton;
+    btnMult: TButton;
+    btnDigit3: TButton;
+    btnDigit1: TButton;
+    btnDot: TButton;
+    btnDiv: TButton;
+    btnEquals: TButton;
+    btnDigit0: TButton;
+    btnhistory: TButton;
+    pnlCalculator: TPanel;
+    pnlHistory: TPanel;
+    btnback: TButton;
+    FDConnection1: TFDConnection;
+    FDQuery1: TFDQuery;
+    DBGridHistory: TDBGrid;
+    DataSourceHistory: TDataSource;
+    FDQueryHistory: TFDQuery;
+    procedure NumbersClick(Sender: TObject);
+    procedure btnBSClick(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+    procedure btnCEClick(Sender: TObject);
+    procedure btnPMClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure btnSubClick(Sender: TObject);
+    procedure btnMultClick(Sender: TObject);
+    procedure btnDivClick(Sender: TObject);
+    procedure btnEqualsClick(Sender: TObject);
+    procedure btnDotClick(Sender: TObject);
+    procedure btnhistoryClick(Sender: TObject);
+    procedure btnbackClick(Sender: TObject);
+    procedure SaveHistory(const Expr, Res: string);
+   private
+    firstnum, secondnum, answer: Double;
+    opers: Char;
+    procedure LoadHistory;
+
+  public
+    { Public declarations }
+  end;
+
+var
+  Form8: TForm8;
+
+implementation
+
+{$R *.dfm}
+
+
+{---Add---}
+procedure TForm8.btnAddClick(Sender: TObject);
+begin
+      firstnum := StrToFloat(txtDisplay.Text);
+  opers := '+';
+  txtDisplay.Text := '0';
+
+end;
+
+{---Sub---}
+procedure TForm8.btnSubClick(Sender: TObject);
+begin
+  firstnum := StrToFloat(txtDisplay.Text);
+  opers := '-';
+  txtDisplay.Text := '0';
+
+end;
+
+{---Multi---}
+procedure TForm8.btnMultClick(Sender: TObject);
+begin
+  firstnum := StrToFloat(txtDisplay.Text);
+  opers := '*';
+  txtDisplay.Text := '0';
+
+end;
+
+{---Div---}
+procedure TForm8.btnDivClick(Sender: TObject);
+begin
+  firstnum := StrToFloat(txtDisplay.Text);
+  opers := '/';
+  txtDisplay.Text := '0';
+
+end;
+
+function BuildExpression(A, B: Double; Op: Char): string;
+begin
+  Result := FloatToStr(A) + ' ' + Op + ' ' + FloatToStr(B);
+end;
+
+procedure TForm8.SaveHistory(const Expr, Res: string);
+begin
+  FDQuery1.Close;
+  FDQuery1.SQL.Text :=
+    'INSERT INTO CalcHistory (Expression, Result, CreatedAt) ' +
+    'VALUES (:Expr, :Res, :CreatedAt)';
+
+  FDQuery1.ParamByName('Expr').AsString := Expr;
+  FDQuery1.ParamByName('Res').AsString := Res;
+  FDQuery1.ParamByName('CreatedAt').AsString :=
+    FormatDateTime('yyyy-mm-dd hh:nn:ss', Now);
+
+  FDQuery1.ExecSQL;
+end;
+
+
+{---Equals---}
+procedure TForm8.btnEqualsClick(Sender: TObject);
+var
+  Expr: string;
+begin
+  secondnum := StrToFloat(txtDisplay.Text);
+
+  case opers of
+    '+': answer := firstnum + secondnum;
+    '-': answer := firstnum - secondnum;
+    '*': answer := firstnum * secondnum;
+    '/':
+      begin
+        if secondnum = 0 then
+        begin
+          ShowMessage('Cannot divide by zero');
+          Exit;
+        end;
+        answer := firstnum / secondnum;
+      end;
+  end;
+
+  txtDisplay.Text := FloatToStr(answer);
+    Expr := FloatToStr(firstnum) + ' ' + opers + ' ' + FloatToStr(secondnum);
+    SaveHistory(Expr, FloatToStr(answer));
+end;
+
+
+
+procedure TForm8.btnhistoryClick(Sender: TObject);
+begin
+  pnlCalculator.Visible := False;
+  pnlHistory.Visible := True;
+    pnlHistory.BringToFront;
+end;
+
+procedure TForm8.LoadHistory;
+begin
+  FDQueryHistory.Close;
+  FDQueryHistory.SQL.Text :=
+    'SELECT Expression, Result, CreatedAt ' +
+    'FROM CalcHistory ' +
+    'ORDER BY Id DESC ' +
+    'LIMIT 10';
+
+  FDQueryHistory.Open;
+end;
+
+
+procedure TForm8.btnDotClick(Sender: TObject);
+begin
+  if Pos('.', txtDisplay.Text) = 0 then
+    txtDisplay.Text := txtDisplay.Text + '.';
+end;
+
+
+procedure TForm8.btnPMClick(Sender: TObject);
+var q : real;
+begin
+q := StrToFloat (txtdisplay.text);
+txtdisplay.text := FloatToStr(-1 * q);
+end;
+
+
+procedure TForm8.Button4Click(Sender: TObject);
+begin
+    txtdisplay.text :='0'
+end;
+
+procedure TForm8.NumbersClick(Sender: TObject);
+var b : Tbutton;
+begin
+b:=sender as TButton;
+if txtdisplay.text ='0' then
+  begin
+     txtdisplay.text := b.Caption;
+  end
+  else
+     txtdisplay.text := txtdisplay.text + b.Caption;
+end;
+
+  procedure TForm8.btnbackClick(Sender: TObject);
+begin
+  pnlHistory.Visible := False;
+  pnlCalculator.Visible := True;
+end;
+
+procedure TForm8.btnBSClick(Sender: TObject);
+begin
+txtdisplay.text := copy(txtdisplay.text,1 ,length(txtdisplay.text) -1 );
+if txtdisplay.text ='' then
+  txtdisplay.text :='0';
+end;
+
+procedure TForm8.btnCEClick(Sender: TObject);
+begin
+  txtdisplay.Text := '0';
+
+  firstnum := 0;
+  secondnum := 0;
+  answer := 0;
+  opers := #0;
+end;
+
+
+
+end.
