@@ -4,8 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Net.HttpClient, System.Net.HttpClientComponent,
-  System.NetEncoding;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,   System.Net.HttpClient,
+  System.Net.HttpClientComponent,
+  System.JSON,
+  IdCoderMIME;
 
 type
   TForm11 = class(TForm)
@@ -27,19 +29,20 @@ implementation
 
 {$R *.dfm}
 
-procedure TForm1.btnCallAPIClick(Sender: TObject);
+procedure TForm11.btnCallAPIClick(Sender: TObject);
 var
   HttpClient: TNetHTTPClient;
   Response: IHTTPResponse;
   Username, Password: string;
   AuthHeader: string;
   JsonObj: TJSONObject;
+  AuthValue: string;
   IsAuthenticated: Boolean;
   LoggedInUser: string;
+  Encoder: TIdEncoderMIME;
 begin
   MemoResult.Clear;
 
-  // 1️⃣ Read username & password
   Username := edtUsername.Text;
   Password := edtPassword.Text;
 
@@ -49,25 +52,30 @@ begin
     Exit;
   end;
 
-  // 2️⃣ Create Authorization header
-  AuthHeader :=
-    'Basic ' +
-    TNetEncoding.Base64.Encode(Username + ':' + Password);
+  //Base64 encode username:password
+  Encoder := TIdEncoderMIME.Create(nil);
+  try
+    AuthValue := Encoder.EncodeString(Username + ':' + Password);
+  finally
+    Encoder.Free;
+  end;
 
-  // 3️⃣ Create HTTP client
+  AuthHeader := 'Basic ' + AuthValue;
+
+  // Created HTTP client
   HttpClient := TNetHTTPClient.Create(nil);
   try
     HttpClient.CustomHeaders['Authorization'] := AuthHeader;
 
-    // 4️⃣ Call API
+    // Call API
     Response := HttpClient.Get(
-      'https://httpbin.org/basic-auth/user/passwd'
+      'https://httpbin.org/basic-auth/Komal/123'
     );
 
     MemoResult.Lines.Add('API RESPONSE:');
     MemoResult.Lines.Add(Response.ContentAsString);
 
-    // 5️⃣ Parse JSON
+    // Parse JSON
     JsonObj :=
       TJSONObject.ParseJSONValue(
         Response.ContentAsString
@@ -79,27 +87,24 @@ begin
         Exit;
       end;
 
-      // 6️⃣ Read JSON values
+      // To Read values
       IsAuthenticated :=
-        JsonObj.GetValue<Boolean>('authenticated');
+        SameText(
+          JsonObj.GetValue('authenticated').Value,
+          'true'
+        );
 
       LoggedInUser :=
-        JsonObj.GetValue<string>('user');
+        JsonObj.GetValue('user').Value;
 
-      // 7️⃣ CHECK SUCCESS
+      // Check success
       if IsAuthenticated then
       begin
         MemoResult.Lines.Add('');
         MemoResult.Lines.Add('✅ LOGIN SUCCESS');
         MemoResult.Lines.Add('User: ' + LoggedInUser);
 
-        // 🔥 AFTER SUCCESS — CONTINUE YOUR APP HERE
         ShowMessage('Login successful! Welcome ' + LoggedInUser);
-
-        // Example next steps:
-        // Form2.Show;
-        // btnSave.Enabled := True;
-        // Store token/session
       end
       else
       begin
@@ -113,9 +118,6 @@ begin
   finally
     HttpClient.Free;
   end;
-end;
-
-
 end;
 
 end.
